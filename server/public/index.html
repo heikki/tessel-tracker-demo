@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Tessel tracker</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+			}
+			h1 {
+				position: absolute;
+				right: 1rem;
+				top: 0.5rem;
+				margin: 0;
+				z-index: 10;
+				font-family: Helvetica;
+				color: #fff;
+				text-shadow: 0 1px 3px #000;
+			}
+			#map {
+				position: absolute;
+				height: 100%;
+				width: 100%;
+				background: #222;
+			}
+		</style>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css">
+		<script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+	</head>
+	<body>
+		<h1>Tessel tracker</h1>
+		<div id="map"></div>
+		<script type="text/javascript">
+
+			var es = new EventSource('/events');
+			var map = L.map('map').setView([0, 0], 15);
+			var marker = L.marker([0, 0]).addTo(map);
+			var polyline = L.polyline([]).addTo(map);
+
+			L.tileLayer('https://{s}.tiles.mapbox.com/v3/examples.map-i86nkdio/{z}/{x}/{y}.png', {
+				attribution: '<a href="http://www.mapbox.com/about/maps/" target="_blank">Terms &amp; Feedback</a>',
+			}).addTo(map);
+
+			es.addEventListener('message', function(event) {
+				var items = JSON.parse(event.data) || [];
+				var latLng;
+				items.forEach(function(item) {
+					latLng = L.latLng(item.lat, item.lon);
+					polyline.addLatLng(latLng);
+				});
+				if (latLng) {
+					map.panTo(latLng, { duration: 1 });
+					marker.setLatLng(latLng);
+				}
+			}, false);
+
+			es.addEventListener('error', function(event) {
+				polyline.setLatLngs([]);
+			}, false);
+
+		</script>
+	</body>
+</html>

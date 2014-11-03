@@ -1,0 +1,23 @@
+{
+  "name": "tessel-tracker-demo",
+  "version": "0.0.1",
+  "private": true,
+  "engineStrict": true,
+  "engines": {
+    "node": "0.10.x"
+  },
+  "scripts": {
+    "start": "node server/app.js"
+  },
+  "dependencies": {
+    "body-parser": "*",
+    "express": "*",
+    "gprs-sim900": "*",
+    "gps-a2235h": "*"
+  },
+  "hardware": {
+    "body-parser": false,
+    "express": false,
+    "./server": false
+  }
+}
